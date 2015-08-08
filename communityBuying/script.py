@@ -1,25 +1,24 @@
 import rauth
-import time
 import json
 
 
 def main():
+    json_data = get_results(get_search_parameters(38.9048907, -77.0339064))
 
-    locations = [(38.9048907, -77.0339064)]
-    api_calls = []
-    for lat, long in locations:
+    with open('our_location.json', 'r') as handle:
+        parsed = json.load(handle)
 
-        params = get_search_parameters(lat, long)
+    print "Name:",parsed["businesses"][0]["name"]
+    print "ID:", parsed["businesses"][0]["id"]
+    print "Image URL:", parsed["businesses"][0]["image_url"]
+    print "Phone Number:", parsed["businesses"][0]["phone"]
+    print parsed["businesses"][0]["location"]["display_address"][0]
+    print parsed["businesses"][0]["location"]["display_address"][1]
+    print parsed["businesses"][0]["location"]["display_address"][2]
 
-        api_calls.append(get_results(params))
-        # Be a good internet citizen and rate-limit yourself
-        time.sleep(1.0)
 
-    f = open("our_location.json", "w")
+    print "Name:",json_data["businesses"][0]["name"]
 
-    json.dump(api_calls[0], f)
-
-    f.close()
 
 
 
@@ -41,15 +40,12 @@ def get_results(params):
 
     # Transforms the JSON API response into a Python dictionary
     data = request.json()
-
     session.close()
-
     return data
 
 
 def get_search_parameters(lat, long):
     # See the Yelp API for more details
-
     params = {}
     params["term"] = "restaurant"
     params["ll"] = "{},{}".format(str(lat), str(long))
@@ -57,6 +53,7 @@ def get_search_parameters(lat, long):
     params["limit"] = "1"
 
     return params
+
 
 if __name__ == "__main__":
     main()
