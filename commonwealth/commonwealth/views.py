@@ -24,9 +24,8 @@ class BusinessViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['put'])
     def update_by_yelp_id(self, request, pk=None):
         queryset = Business.objects.get(yelp_id=pk)
-        print(repr(request.data))
-        print(queryset.yelp_id)
-        serializer = BusinessSerializer(queryset, data=request.data)
+        serializer = BusinessSerializer(queryset, data=request.data,
+                partial=True)
         if (serializer.is_valid()):
             serializer.save()
             return Response(serializer.data)

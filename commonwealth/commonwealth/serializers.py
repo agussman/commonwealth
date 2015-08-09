@@ -19,18 +19,31 @@ class BusinessSerializer(serializers.ModelSerializer):
         validated_data['actual_wage'] = actual_wage / 100.0
 
         # compute the wage score and set it
-        wage_score = (actual_wage - BusinessSerializer.min_wage)/(BusinessSerializer.mit_wage - BusinessSerializer.min_wage)
+        wage_score = BusinessSerializer.compute_wage_score(actual_wage)
         validated_data['wage_score'] = wage_score
 
         # compute the coin score and set it
-        coin_score = wage_score * (1 - validated_data['transportation_score'])
+        coin_score = BusinessSerializer.compute_coin_score(wage_score, validated_data['transportation_score'])
         validated_data['coin_score'] = coin_score
 
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        print("UPDATE")
-        print(repr(instance))
-        print(repr(validated_data))
+        instance.actual_wage = validated_data.get('actual_wage', 
+                instance.actual_wage)
+        wage_score = BusinessSerializer.compute_wage_score(instance.actual_wage)
+        coin_score = BusinessSerializer.compute_coin_score(wage_score, 
+                instance.transportation_score)
 
-        #return super().update(instance, validated_data)
+        instance.wage_score = wage_score
+        instance.coin_score = coin_score
+
+        instance.save()
+
+        return instance
+
+    def compute_wage_score(actual_wage):
+        return (actual_wage - BusinessSerializer.min_wage)/(BusinessSerializer.mit_wage - BusinessSerializer.min_wage)
+
+    def compute_coin_score(wage_score, transportation_score):
+        return wage_score * (1 - transportation_score)
