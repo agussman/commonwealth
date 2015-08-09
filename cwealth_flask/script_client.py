@@ -1,5 +1,6 @@
 from yelpclient import YelpClient
 import json
+import simplejson
 import httplib
 import urllib
 from geopy.distance import great_circle
@@ -17,6 +18,7 @@ headers = {
     'api_key': '742e08c7b5324dfcb1a51cfbba70c8f8',
 }
 
+
 def main():
     # local lat & lon
     local_lon = -77.0339064
@@ -24,15 +26,31 @@ def main():
 
     json_file = client.search_by_geo_coord(latlong=(local_lat, local_lon), term="food", limit=20, radius=2000)
 
-    tempList1 = []
-
     for i in json_file["businesses"]:
-        tempList2 = [i["id"], i["name"], i["image_url"], i["location"]["display_address"][0],
-                     json_file["region"]["center"]["latitude"], json_file["region"]["center"]["longitude"]]
-        tempList1.append(tempList2)
+        bus_lat = json_file["region"]["center"]["latitude"]
+        bus_lon = json_file["region"]["center"]["longitude"]
+
+        new_json = {
+            "yelp_id": i["id"],
+            "business_name": i["name"],
+            "lat": bus_lat,
+            "lon": bus_lon,
+            "address": i["location"]["display_address"][0],
+            "image_url": i["image_url"],
+            "wage_score": 14.84,
+            "transportation_score": compute_transportation_score(bus_lat, bus_lon)
+        }
 
     f = open("sample_data.json", "w")
-    json.dump(tempList1, f)
+    json.dump(new_json, f)
+    f.close()
+
+
+def compute_transportation_score(lat, lon):
+
+    train_data = distance_to_trains_json(lat, lon)
+    bus_date = distance_to_buses_json(lat, lon)
+    return smallest_distance(lat, lon, bus_date, train_data)
 
 
 # Provides the distance from the small business to public transportation
@@ -52,7 +70,10 @@ def distance_to_buses_json(lat, lon):
     conn.request("GET", endpoint, "{body}", headers)
     response = conn.getresponse()
 
+    print response.read()
+
     data = json.loads(response.read())
+
     conn.close()
 
     return data
@@ -64,7 +85,7 @@ def distance_to_trains_json(lat, lon):
         'Lat': lat,
         'Lon': lon,
         # Hardcoded, can be changed
-        'Radius': '500',
+        'Radius': '250',
     })
 
     conn = httplib.HTTPSConnection('api.wmata.com')
@@ -72,7 +93,12 @@ def distance_to_trains_json(lat, lon):
     conn.request("GET", endpoint, "{body}", headers)
     response = conn.getresponse()
 
-    data = json.loads(response.read())
+    print response.read()
+
+    data = simplejson.loads(response.read())
+
+
+
     conn.close()
 
     return data
