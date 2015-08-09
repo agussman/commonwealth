@@ -8,7 +8,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Businesses to be viewed.
     """
-    queryset = Business.objects.all().order_by('overall_score')
+    queryset = Business.objects.all().order_by('coin_score')
     serializer_class = BusinessSerializer
 
     @detail_route()
