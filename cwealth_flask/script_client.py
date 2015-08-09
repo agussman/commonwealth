@@ -17,31 +17,22 @@ headers = {
     'api_key': '742e08c7b5324dfcb1a51cfbba70c8f8',
 }
 
-
 def main():
     # local lat & lon
-
     local_lon = -77.0339064
     local_lat = 38.9048907
 
-    json_file = client.search_by_geo_coord(latlong=(local_lat, local_lon), term="food", limit=1, radius=2000)
+    json_file = client.search_by_geo_coord(latlong=(local_lat, local_lon), term="food", limit=20, radius=2000)
 
-    print "Name:", json_file["businesses"][0]["name"]
-    print "ID:", json_file["businesses"][0]["id"]
-    print "Image URL:", json_file["businesses"][0]["image_url"]
-    print "Phone Number:", json_file["businesses"][0]["phone"]
-    print json_file["businesses"][0]["location"]["display_address"][0]
-    print json_file["businesses"][0]["location"]["display_address"][1]
-    print json_file["businesses"][0]["location"]["display_address"][2]
+    tempList1 = []
 
-    lat = json_file["region"]["center"]["latitude"]
-    lon = json_file["region"]["center"]["longitude"]
+    for i in json_file["businesses"]:
+        tempList2 = [i["id"], i["name"], i["image_url"], i["location"]["display_address"][0],
+                     json_file["region"]["center"]["latitude"], json_file["region"]["center"]["longitude"]]
+        tempList1.append(tempList2)
 
-    f = open("restaurant_search.json", "w")
-    json.dump(json_file, f)
-    f.close()
-
-    print smallest_distance(lat, lon, distance_to_buses_json(lat, lon), distance_to_trains_json(lat, lon))
+    f = open("sample_data.json", "w")
+    json.dump(tempList1, f)
 
 
 # Provides the distance from the small business to public transportation
