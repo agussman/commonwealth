@@ -9,9 +9,9 @@ def main():
     api_calls = []
     for lat, long in locations:
 
-        params = get_search_parameters(lat, long)
+        params = get_yelp_parameters(lat, long)
 
-        api_calls.append(get_results(params))
+        api_calls.append(get_yelp_results(params))
         # Be a good internet citizen and rate-limit yourself
         time.sleep(1.0)
 
@@ -24,7 +24,7 @@ def main():
 
 
 
-def get_results(params):
+def get_yelp_results(params):
     # Obtain these from Yelp's manage access page
     consumer_key = "jb_FCNZnRQUl-ZBYIC7AMQ"
     consumer_secret = "9w2belyaG3TQljVJ3AFqAct2zsQ"
@@ -47,7 +47,7 @@ def get_results(params):
     return data
 
 
-def get_search_parameters(lat, long):
+def get_yelp_parameters(lat, long):
     # See the Yelp API for more details
 
     params = {}
