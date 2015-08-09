@@ -1,31 +1,24 @@
 import rauth
-import time
-import json
-import httplib
-import urllib
-import base64
 
 def main():
+    json_data = get_yelp_results(get_yelp_search_parameters(38.9048907, -77.0339064))
 
-    locations = [(38.9048907, -77.0339064)]
-    api_calls = []
-    for lat, long in locations:
+    print "Name:", json_data["businesses"][0]["name"]
+    print "ID:", json_data["businesses"][0]["id"]
+    print "Image URL:", json_data["businesses"][0]["image_url"]
+    print "Phone Number:", json_data["businesses"][0]["phone"]
+    print json_data["businesses"][0]["location"]["display_address"][0]
+    print json_data["businesses"][0]["location"]["display_address"][1]
+    print json_data["businesses"][0]["location"]["display_address"][2]
 
-        params = get_yelp_parameters(lat, long)
-
-        api_calls.append(get_yelp_results(params))
-        # Be a good internet citizen and rate-limit yourself
-        time.sleep(1.0)
-
-    f = open("our_location.json", "w")
-
-    json.dump(api_calls[0], f)
-
-    f.close()
+    lat = json_data["region"]["center"]["latitude"]
+    long = json_data["region"]["center"]["longitude"]
 
 
 
-
+# Requests to Yelp API - Function
+# Input: parameters to call API Function
+# Output: json Query
 def get_yelp_results(params):
     # Obtain these from Yelp's manage access page
     consumer_key = "jb_FCNZnRQUl-ZBYIC7AMQ"
@@ -49,16 +42,20 @@ def get_yelp_results(params):
     return data
 
 
-def get_yelp_parameters(lat, long):
+# Input: Requires Latitude & Longitude
+# Output: Returns Param String for Calling YELP API
+def get_yelp_search_parameters(lat, long):
     # See the Yelp API for more details
-
     params = {}
+
+    # Hardcoded Term Searches, can be changed
     params["term"] = "restaurant"
     params["ll"] = "{},{}".format(str(lat), str(long))
     params["radius_filter"] = "2000"
     params["limit"] = "1"
 
     return params
+
 
 if __name__ == "__main__":
     main()
