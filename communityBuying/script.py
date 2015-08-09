@@ -1,9 +1,9 @@
-import rauth
 import json
+
+import rauth
 
 
 def main():
-
     json_data = get_results(get_search_parameters(38.9048907, -77.0339064))
 
     with open('our_location.json', 'r') as handle:
@@ -18,40 +18,37 @@ def main():
     print parsed["businesses"][0]["location"]["display_address"][2]
 
 
-
-
-
-
-
-
 # Requests to Yelp API - Function
-# Input:
-# Output:
-
+# Input: parameters to call API Function
+# Output: json Query
 def get_results(params):
-    # Obtain these from Yelp's manage access page
-    consumer_key = "jb_FCNZnRQUl-ZBYIC7AMQ"
-    consumer_secret = "9w2belyaG3TQljVJ3AFqAct2zsQ"
-    token = "nwmC3CUV1Gq8W8idtT2SIhVsPEqYVVhj"
-    token_secret = "PHG1XzFh0r5ZVQpDt74VN-TN5bs"
-
+    # Obtain API Keys from Yelp's manage access page
+    # Commence Session
     session = rauth.OAuth1Session(
-        consumer_key=consumer_key
-        , consumer_secret=consumer_secret
-        , access_token=token
-        , access_token_secret=token_secret)
+        consumer_key="jb_FCNZnRQUl-ZBYIC7AMQ",
+        consumer_secret="9w2belyaG3TQljVJ3AFqAct2zsQ",
+        access_token="nwmC3CUV1Gq8W8idtT2SIhVsPEqYVVhj",
+        access_token_secret="PHG1XzFh0r5ZVQpDt74VN-TN5bs")
 
+    # Requesting + Storing
     request = session.get("http://api.yelp.com/v2/business", params=params)
 
-    # Transforms the JSON API response into a Python dictionary
+    # Transforms response into a JSON Format
     data = request.json()
+
+    # Session Closed
     session.close()
+
     return data
 
 
+# Input: Requires Latitude & Longitude
+# Output: Returns Param String for Calling YELP API
 def get_search_parameters(lat, long):
     # See the Yelp API for more details
     params = {}
+
+    # Hardcoded Term Searches, can be changed
     params["term"] = "restaurant"
     params["ll"] = "{},{}".format(str(lat), str(long))
     params["radius_filter"] = "2000"
