@@ -1,13 +1,9 @@
 import datetime
 import json
-import httplib
-import urllib
 from yelpclient import YelpClient
-from geopy.distance import great_circle
-from flask import Flask, jsonify, request
-from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError
-from marshmallow import Schema, fields, ValidationError
+from flask import Flask, request
+from flask_restful import Resource, Api
+
 
 keys = {
     'consumer_key': 'jb_FCNZnRQUl-ZBYIC7AMQ',
@@ -23,6 +19,27 @@ headers = {
 }
 
 
+app = Flask(__name__)
+api = Api(app)
+
+todos = {}
+
+
+class TodoSimple(Resource):
+
+    def get(self, todo_id):
+        return {todo_id: todos[todo_id]}
+
+
+    def put(self, todo_id):
+        todos[todo_id] = request.form['data']
+        return {todo_id: todos[todo_id]}
+
+
+api.add_resource(TodoSimple, '/<string:todo_id>')
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 def main():
@@ -51,8 +68,6 @@ def main():
         f = open("sample_data.json", "w")
         json.dump(new_json, f)
         f.close()
-
-
 
 
 # def compute_transportation_score(lat, lon):
@@ -127,3 +142,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+__author__ = 'georgezaro'
