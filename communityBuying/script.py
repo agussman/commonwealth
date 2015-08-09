@@ -1,11 +1,11 @@
 import json
+
 import rauth
 
 
 def main():
 
     json_data = get_results(get_search_parameters(38.9048907, -77.0339064))
-
 
     print "Name:", json_data["businesses"][0]["name"]
     print "ID:", json_data["businesses"][0]["id"]
@@ -20,7 +20,6 @@ def main():
 # Input: parameters to call API Function
 # Output: json Query
 def get_results(params):
-
     # Obtain these from Yelp's manage access page
     consumer_key = "jb_FCNZnRQUl-ZBYIC7AMQ"
     consumer_secret = "9w2belyaG3TQljVJ3AFqAct2zsQ"
@@ -56,6 +55,8 @@ def get_search_parameters(lat, long):
     params["limit"] = "1"
 
     return params
+
+
 
 
 if __name__ == "__main__":
