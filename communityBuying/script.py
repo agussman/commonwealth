@@ -3,12 +3,13 @@ import json
 
 
 def main():
+
     json_data = get_results(get_search_parameters(38.9048907, -77.0339064))
 
     with open('our_location.json', 'r') as handle:
         parsed = json.load(handle)
 
-    print "Name:",parsed["businesses"][0]["name"]
+    print "Name:", parsed["businesses"][0]["name"]
     print "ID:", parsed["businesses"][0]["id"]
     print "Image URL:", parsed["businesses"][0]["image_url"]
     print "Phone Number:", parsed["businesses"][0]["phone"]
@@ -17,11 +18,15 @@ def main():
     print parsed["businesses"][0]["location"]["display_address"][2]
 
 
-    print "Name:",json_data["businesses"][0]["name"]
 
 
 
 
+
+
+# Requests to Yelp API - Function
+# Input:
+# Output:
 
 def get_results(params):
     # Obtain these from Yelp's manage access page
@@ -36,7 +41,7 @@ def get_results(params):
         , access_token=token
         , access_token_secret=token_secret)
 
-    request = session.get("http://api.yelp.com/v2/search", params=params)
+    request = session.get("http://api.yelp.com/v2/business", params=params)
 
     # Transforms the JSON API response into a Python dictionary
     data = request.json()
