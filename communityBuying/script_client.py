@@ -1,10 +1,5 @@
-from urllib import urlencode
 from yelpclient import YelpClient
-
-import logging
-import oauth2
-import requests
-import time
+import json
 
 keys = {
     'consumer_key': 'jb_FCNZnRQUl-ZBYIC7AMQ',
@@ -19,11 +14,20 @@ client = YelpClient(keys)
 def main():
     lat = 38.9048907
     long = -77.0339064
-    provideJsonList(lat, long)
+    json_file = provide_json_list(lat, long)
+
+    f = open("food_search.json", "w")
+    json.dump(json_file, f)
+    f.close()
 
 
-def provideJsonList(lat, long):
-    return client.search_by_geo_coord(latlong=(lat, long), term="restaurants", limit=40)
+# Provide Json List: Create List for Local businesses in the surrounding area
+# Input: Lat, Long both in float value
+# Output: Json file of stores
+def provide_json_list(lat, long):
+
+    return client.search_by_geo_coord(latlong=(lat, long), term="food", limit=1, radius=2000)
+
 
 
 if __name__ == "__main__":

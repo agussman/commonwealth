@@ -15,6 +15,7 @@ def main():
     long = json_data["region"]["center"]["longitude"]
 
 
+
 # Requests to Yelp API - Function
 # Input: parameters to call API Function
 # Output: json Query
